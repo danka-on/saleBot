@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sheets - Inventory Management System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .sheet-card {
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .table-responsive {
+            margin-top: 20px;
+        }
+        .refresh-btn {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="mb-4">Google Sheets Data</h1>
+        
+        <!-- Inventory Sheet -->
+        <div class="card sheet-card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5>Inventory Sheet</h5>
+                <button id="refresh-inventory" class="btn btn-primary btn-sm">Refresh</button>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped" id="inventory-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>SKU</th>
+                                <th>Name</th>
+                                <th>Location</th>
+                                <th>Quantity</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in inventory_data %}
+                            <tr>
+                                <td>{{ item.date }}</td>
+                                <td>{{ item.sku }}</td>
+                                <td>{{ item.name }}</td>
+                                <td>{{ item.location }}</td>
+                                <td>{{ item.quantity }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sales Sheet -->
+        <div class="card sheet-card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5>Sales Sheet</h5>
+                <button id="refresh-sales" class="btn btn-primary btn-sm">Refresh</button>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped" id="sales-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Buyer Name</th>
+                                <th>Item Name</th>
+                                <th>SKU</th>
+                                <th>Tracking Number</th>
+                                <th>Found in Inventory</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for sale in sales_data %}
+                            <tr>
+                                <td>{{ sale.date }}</td>
+                                <td>{{ sale.buyer_name }}</td>
+                                <td>{{ sale.item_name }}</td>
+                                <td>{{ sale.sku }}</td>
+                                <td>{{ sale.tracking_number }}</td>
+                                <td>{{ sale.found_in_inventory }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-4">
+            <a href="/" class="btn btn-primary">Back to Dashboard</a>
+        </div>
+    </div>
+
+    <script>
+        // Refresh Inventory Data
+        document.getElementById('refresh-inventory').addEventListener('click', () => {
+            fetch('/api/refresh-inventory')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        location.reload();
+                    } else {
+                        alert('Error refreshing inventory data: ' + (data.error || 'Unknown error'));
+                    }
+                })
+                .catch(error => {
+                    alert('Error refreshing inventory data: ' + error);
+                });
+        });
+
+        // Refresh Sales Data
+        document.getElementById('refresh-sales').addEventListener('click', () => {
+            fetch('/api/refresh-sales')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        location.reload();
+                    } else {
+                        alert('Error refreshing sales data: ' + (data.error || 'Unknown error'));
+                    }
+                })
+                .catch(error => {
+                    alert('Error refreshing sales data: ' + error);
+                });
+        });
+    </script>
+</body>
+</html> 
